@@ -1,20 +1,17 @@
 package edu.curso;
 
-import com.sun.xml.internal.ws.api.policy.subject.BindingSubject;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalDateStringConverter;
 import javafx.util.converter.NumberStringConverter;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class PetBoundary extends Application {
 
@@ -29,9 +26,34 @@ public class PetBoundary extends Application {
 
     private PetControl control = new PetControl();   // Composição
 
+    private TableView<Pet> table = new TableView<>();
+
+    private void criarTabela() {
+        TableColumn<Pet, Long> col1 = new TableColumn<>("Id");
+        col1.setCellValueFactory( new PropertyValueFactory<>("id") );
+
+        TableColumn<Pet, String> col2 = new TableColumn<>("Nome");
+        col2.setCellValueFactory( new PropertyValueFactory<>("nome") );
+
+        table.getColumns().addAll(col1, col2);
+
+        table.setItems(control.getLista());
+
+        table
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (obs, antigo, novo) -> {
+                    if (novo != null) {
+                        control.setEntity(novo);
+                    }
+                }
+                );
+    }
+
     @Override
     public void start(Stage stage) {
-        GridPane panPrincipal = new GridPane();
+        BorderPane panPrincipal = new BorderPane();
+        GridPane panCampos = new GridPane();
 
         Bindings.bindBidirectional(txtId.textProperty(), control.id, new NumberStringConverter());
         Bindings.bindBidirectional(txtNome.textProperty(), control.nome);
@@ -40,23 +62,23 @@ public class PetBoundary extends Application {
         Bindings.bindBidirectional(txtNascimento.textProperty(),
                 control.nascimento, new LocalDateStringConverter());
 
-        panPrincipal.add(new Label("Id"), 0, 0);
-        panPrincipal.add(txtId, 1, 0);
+        panCampos.add(new Label("Id"), 0, 0);
+        panCampos.add(txtId, 1, 0);
 
-        panPrincipal.add(new Label("Nome"), 0, 1);
-        panPrincipal.add(txtNome, 1, 1);
+        panCampos.add(new Label("Nome"), 0, 1);
+        panCampos.add(txtNome, 1, 1);
 
-        panPrincipal.add(new Label("Raça"), 0, 2);
-        panPrincipal.add(txtRaca, 1, 2);
+        panCampos.add(new Label("Raça"), 0, 2);
+        panCampos.add(txtRaca, 1, 2);
 
-        panPrincipal.add(new Label("Peso"), 0, 3);
-        panPrincipal.add(txtPeso, 1, 3);
+        panCampos.add(new Label("Peso"), 0, 3);
+        panCampos.add(txtPeso, 1, 3);
 
-        panPrincipal.add(new Label("Nascimento"), 0, 4);
-        panPrincipal.add(txtNascimento, 1, 4);
+        panCampos.add(new Label("Nascimento"), 0, 4);
+        panCampos.add(txtNascimento, 1, 4);
 
-        panPrincipal.add(btnAdicionar, 0, 5);
-        panPrincipal.add(btnPesquisar, 1, 5);
+        panCampos.add(btnAdicionar, 0, 5);
+        panCampos.add(btnPesquisar, 1, 5);
         
         btnAdicionar.setOnAction( e -> {
             control.adicionar();
@@ -66,6 +88,9 @@ public class PetBoundary extends Application {
            control.pesquisar();
         });
 
+        panPrincipal.setTop(panCampos);
+        panPrincipal.setCenter(table);
+        this.criarTabela();
         Scene scn = new Scene(panPrincipal, 600, 400);
 
         stage.setScene(scn);

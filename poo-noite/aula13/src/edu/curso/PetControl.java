@@ -1,6 +1,8 @@
 package edu.curso;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,7 +16,8 @@ public class PetControl {
     DoubleProperty peso = new SimpleDoubleProperty(0);
     ObjectProperty nascimento = new SimpleObjectProperty(LocalDate.now());
 
-    private List<Pet> lista = new ArrayList<>();
+    // private List<Pet> lista = new ArrayList<>();
+    private ObservableList<Pet> lista = FXCollections.observableArrayList();
 
     public Pet getEntity() {
         Pet p = new Pet();
@@ -46,5 +49,9 @@ public class PetControl {
                 break;
             }
         }
+    }
+
+    public ObservableList<Pet> getLista() {
+        return lista;
     }
 }
