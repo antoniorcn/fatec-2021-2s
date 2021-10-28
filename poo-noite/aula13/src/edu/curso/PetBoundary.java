@@ -2,6 +2,8 @@ package edu.curso;
 
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -12,6 +14,9 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.converter.LocalDateStringConverter;
 import javafx.util.converter.NumberStringConverter;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class PetBoundary extends Application {
 
@@ -28,6 +33,8 @@ public class PetBoundary extends Application {
 
     private TableView<Pet> table = new TableView<>();
 
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     private void criarTabela() {
         TableColumn<Pet, Long> col1 = new TableColumn<>("Id");
         col1.setCellValueFactory( new PropertyValueFactory<>("id") );
@@ -35,7 +42,20 @@ public class PetBoundary extends Application {
         TableColumn<Pet, String> col2 = new TableColumn<>("Nome");
         col2.setCellValueFactory( new PropertyValueFactory<>("nome") );
 
-        table.getColumns().addAll(col1, col2);
+        TableColumn<Pet, String> col3 = new TableColumn<>("Raça");
+        col3.setCellValueFactory( new PropertyValueFactory<>("raca") );
+
+        TableColumn<Pet, Double> col4 = new TableColumn<>("Peso");
+        col4.setCellValueFactory( new PropertyValueFactory<>("peso") );
+
+        TableColumn<Pet, String> col5 = new TableColumn<>("Nascimento");
+        col5.setCellValueFactory( (petProp) -> {
+            LocalDate n = petProp.getValue().getNascimento();
+            String strData = n.format(this.dtf);
+            return new ReadOnlyStringWrapper(strData);
+        } );
+
+        table.getColumns().addAll(col1, col2, col3, col4, col5);
 
         table.setItems(control.getLista());
 
