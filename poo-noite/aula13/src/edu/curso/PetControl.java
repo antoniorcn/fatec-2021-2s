@@ -16,8 +16,10 @@ public class PetControl {
     DoubleProperty peso = new SimpleDoubleProperty(0);
     ObjectProperty nascimento = new SimpleObjectProperty(LocalDate.now());
 
-    // private List<Pet> lista = new ArrayList<>();
-    private ObservableList<Pet> lista = FXCollections.observableArrayList();
+    private static long counter = 0;
+
+    private List<Pet> lista = new ArrayList<>();
+    private ObservableList<Pet> listaView = FXCollections.observableArrayList();
 
     public Pet getEntity() {
         Pet p = new Pet();
@@ -37,21 +39,57 @@ public class PetControl {
         nascimento.set(p.getNascimento());
     }
 
-    public void adicionar() {
+    public void salvar() {
         Pet p = getEntity();
-        lista.add(p);
+        boolean encontrado = false;
+        for (int i = 0; i < lista.size(); i++) {
+            Pet pet = lista.get(i);
+            if (p.getId() == pet.getId()) {
+                lista.set(i, p);
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            lista.add(p);
+        }
+        atualizarListaView();
+    }
+
+    public void novoPet() {
+        Pet p = new Pet();
+        p.setId(++counter);
+        setEntity(p);
     }
 
     public void pesquisar() {
+        listaView.clear();
         for(Pet p : lista) {
             if (p.getNome().contains(nome.get())) {
-                setEntity(p);
-                break;
+                listaView.add(p);
+               // setEntity(p);
+               // break;
             }
         }
     }
 
-    public ObservableList<Pet> getLista() {
-        return lista;
+    public void remover(long id) {
+        for (Pet p : lista) {
+            if (p.getId() == id) {
+                lista.remove(p);
+                break;
+            }
+        }
+        atualizarListaView();
+    }
+
+    public void atualizarListaView() {
+        listaView.clear();
+        listaView.addAll(lista);
+    }
+
+    public ObservableList<Pet> getListaView() {
+        return listaView;
     }
 }
