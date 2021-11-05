@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 
@@ -28,6 +30,7 @@ public class PetBoundary extends Application {
     private Button btnNovoPet = new Button("Novo Pet");
     private Button btnSalvar = new Button("Salvar");
     private Button btnPesquisar = new Button("Pesquisar");
+    private Button btnTesteModal = new Button("Teste Modal");
 
     private PetControl control = new PetControl();   // Composição
 
@@ -103,6 +106,28 @@ public class PetBoundary extends Application {
                 );
     }
 
+    public LocalDate popupScreenData() {
+
+
+        Stage modal = new Stage();
+        modal.initModality(Modality.WINDOW_MODAL);
+
+        VBox painel = new VBox();
+        Scene scn = new Scene(painel, 400, 200);
+
+        modal.setScene(scn);
+
+        DatePicker dta = new DatePicker();
+        Button btnDismiss = new Button("Ok");
+        btnDismiss.setOnAction( (e) -> {
+            modal.close();
+        });
+        painel.getChildren().addAll(new Label("Data selecionada : "), dta, btnDismiss);
+        modal.showAndWait();
+
+        return dta.getValue();
+    }
+
     @Override
     public void start(Stage stage) {
         BorderPane panPrincipal = new BorderPane();
@@ -134,6 +159,7 @@ public class PetBoundary extends Application {
 
         panCampos.add(btnSalvar, 0, 5);
         panCampos.add(btnPesquisar, 1, 5);
+        panCampos.add(btnTesteModal, 2, 5);
         
         btnSalvar.setOnAction(e -> {
             control.salvar();
@@ -145,6 +171,10 @@ public class PetBoundary extends Application {
 
         btnNovoPet.setOnAction( e -> {
            control.novoPet();
+        });
+
+        btnTesteModal.setOnAction( e -> {
+            System.out.println( popupScreenData() );
         });
 
         panPrincipal.setTop(panCampos);
