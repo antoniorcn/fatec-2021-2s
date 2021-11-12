@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class PetBoundary extends Application {
+public class PetBoundary implements StrategyBoundary {
 
     private TextField txtId = new TextField();
     private TextField txtNome = new TextField();
@@ -106,7 +107,7 @@ public class PetBoundary extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public Pane render() {
         BorderPane panPrincipal = new BorderPane();
         GridPane panCampos = new GridPane();
         txtId.setEditable(false);
@@ -152,14 +153,6 @@ public class PetBoundary extends Application {
         panPrincipal.setTop(panCampos);
         panPrincipal.setCenter(table);
         this.criarTabela();
-        Scene scn = new Scene(panPrincipal, 600, 400);
-
-        stage.setScene(scn);
-        stage.setTitle("Gestão de Pets");
-        stage.show();
-    }
-
-    public static void main(String[] args) {
-        Application.launch(PetBoundary.class, args);
+        return (panPrincipal);
     }
 }
